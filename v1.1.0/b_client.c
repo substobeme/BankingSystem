@@ -124,8 +124,6 @@ void handle_user(int cd)
                 char buffer1[500];
                 recv(cd, buffer1, sizeof(buffer), 0);
                 printf("%s", buffer1);
-
-                printf("Enter the loan amount: ");
                 scanf("%f", &amount1);
     
   
