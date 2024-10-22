@@ -58,6 +58,65 @@ void passbook_update(struct TRANSACTION *tran)
 }
 
 
+
+char *view_feedback()
+{
+    int fd = open("feedback.db", O_RDONLY);
+    if (fd == -1)
+    {
+        perror("System Crashed\n");
+        return "Can't fetch feedback";
+    }
+
+    struct flock lock;
+    lock.l_type = F_RDLCK;
+    lock.l_whence = SEEK_SET;
+    lock.l_start = 0;
+    lock.l_len = 0;
+    lock.l_pid = getpid();
+
+    if (fcntl(fd, F_SETLKW, &lock) == -1)
+    {
+        perror("Failed to lock file\n");
+        close(fd);
+        return "Can't fetch feedback";
+    }
+
+    struct FEEDBACK fdbk;
+    char *fBuffer = malloc(50000); 
+    if (fBuffer == NULL)
+    {
+        perror("Memory allocation failed\n");
+        close(fd);
+        return "Can't fetch feedback";
+    }
+
+    strcpy(fBuffer, "The feedbacks collected are:\n\n");
+
+    while (read(fd, &fdbk, sizeof(struct FEEDBACK)) > 0)
+    {
+        strcat(fBuffer, "Feedback given by: ");
+        strcat(fBuffer, fdbk.username);
+        strcat(fBuffer, "\nFeedback: ");
+        strcat(fBuffer, fdbk.feedback);
+        strcat(fBuffer, "\nGiven on: ");
+        strcat(fBuffer, ctime(&fdbk.tme));
+        strcat(fBuffer, "\n\n");
+    }
+
+    
+    lock.l_type = F_UNLCK;
+    if (fcntl(fd, F_SETLKW, &lock) == -1)
+    {
+        perror("Failed to unlock file\n");
+    }
+
+    close(fd);
+    return fBuffer;
+}
+
+
+
 char *view_passbook(char *t_username)
 {
     int fd = open("transaction.db", O_RDONLY);
@@ -676,8 +735,13 @@ void login_manager(struct USER *loginU,int cd){
     printf("Job Done\n");
     break;
     
-    
     case 5:
+    char* feedReader= view_feedback();
+    send(cd,feedReader,strlen(feedReader)+1,0);
+    printf("Job done");
+    break;
+    
+    case 6:
     logout(loginU);
     return;
     default:

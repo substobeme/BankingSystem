@@ -513,7 +513,7 @@ while(1){
                     "Welcome, ADMIN %s!\n"
                     "=====================================================================\n"
                     "OPTIONS:\n"
-                    "1. View Feedback                                                       |\n"
+                    "1. View Loan                                                           |\n"
                     "----------------------------                                           |\n"
                     "2. Assign Loan                                                         |\n"
                     "----------------------------                                           |\n"
@@ -521,7 +521,9 @@ while(1){
                     "----------------------------                                           |\n"
                     "4. Activate/Deactivate Employee                                        |\n"
                     "----------------------------                                           |\n"
-                    "5. Logout                                                              |\n"
+                    "5. View feedback                                                       |\n"
+                    "----------------------------                                           |\n"
+                    "6. Logout                                                              |\n"
                     "=====================================================================\n"
                     "Enter your choice: ",
                     m_username);
@@ -529,6 +531,7 @@ int c_choice;
 scanf("%d",&c_choice);
 send(cd,&c_choice,sizeof(int),0);
 switch(c_choice){
+
 
 
 case 4:
@@ -552,8 +555,16 @@ if(act_check==1){ printf("Task Completed\n");}
 else printf("Failed to change details\n");
 break;
 
-
 case 5:
+char feedReader[50000];
+bzero(feedReader,sizeof(feedReader));
+recv(cd,feedReader,sizeof(feedReader),0);
+usleep(10);
+printf("%s",feedReader);
+usleep(5);
+break;
+
+case 6:
 printf("Logged out\n");
 return;
 default:
