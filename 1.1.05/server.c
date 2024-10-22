@@ -716,6 +716,26 @@ void login_manager(struct USER *loginU,int cd){
     int c_choice;
     recv(cd,&c_choice,sizeof(int),0);
     switch(c_choice){
+
+
+
+    case 3:
+    char p_username[100];
+    char pack[100];
+    int prom;
+    char pack1[100];
+    bzero(p_username,sizeof(p_username));
+    bzero(pack,sizeof(pack));
+    bzero(pack1,sizeof(pack1));
+    recv(cd,p_username,sizeof(p_username),0);
+    strcpy(pack,"Acknowledgement");
+    send(cd,pack,sizeof(pack),0);
+    recv(cd,&prom,sizeof(int),0);
+    printf("Doing job\n");
+    int pact_check=changedetails(p_username,p_username,1,2,prom);
+    send(cd,&pact_check,sizeof(int),0);
+    printf("Job Done\n");
+    break;
     
     case 4:
     char ac_username[100];

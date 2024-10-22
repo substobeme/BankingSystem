@@ -510,14 +510,14 @@ if(log_m==1){
 printf("Logged in successfully\n");
 while(1){
     printf(       "\n=====================================================================\n"
-                    "Welcome, ADMIN %s!\n"
+                    "Welcome, Manager %s!\n"
                     "=====================================================================\n"
                     "OPTIONS:\n"
                     "1. View Loan                                                           |\n"
                     "----------------------------                                           |\n"
                     "2. Assign Loan                                                         |\n"
                     "----------------------------                                           |\n"
-                    "3. Promotion/Demotion/Fire                                             |\n"
+                    "3. Promotion/Fire                                                      |\n"
                     "----------------------------                                           |\n"
                     "4. Activate/Deactivate Employee                                        |\n"
                     "----------------------------                                           |\n"
@@ -532,6 +532,27 @@ scanf("%d",&c_choice);
 send(cd,&c_choice,sizeof(int),0);
 switch(c_choice){
 
+case 3:
+char p_username[100];
+char pack[100];
+int prom;
+char pack1[100];
+bzero(p_username,sizeof(p_username));
+bzero(pack,sizeof(pack));
+bzero(pack1,sizeof(pack1));
+printf("Enter the username: ");
+scanf("%s",p_username);
+printf("Enter (1)promotion/(Any Number)Fire: ");
+scanf("%d",&prom);
+if(prom!=1)prom=3;
+send(cd,p_username,strlen(p_username),0);
+recv(cd,pack,sizeof(pack),0);
+send(cd,&prom,sizeof(int),0);
+int pact_check;
+recv(cd,&pact_check,sizeof(int),0);
+if(pact_check==1){ printf("Task Completed\n");}
+else printf("Failed to change details\n");
+break;
 
 
 case 4:
