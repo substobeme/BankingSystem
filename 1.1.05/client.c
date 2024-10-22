@@ -30,7 +30,6 @@ scanf("%s",a_password);
 send(cd,a_username,strlen(a_username)+1,0);
 recv(cd,a_ack,sizeof(a_ack),0);
 send(cd,a_password,strlen(a_password)+1,0);
-recv(cd,a_ack1,sizeof(a_ack1),0);
 int log_a;
 recv(cd,&log_a,sizeof(int),0);
 if(log_a==1){
@@ -183,7 +182,6 @@ scanf("%s",c_password);
 send(cd,c_username,strlen(c_username)+1,0);
 recv(cd,a_ack,sizeof(a_ack),0);
 send(cd,c_password,strlen(c_password)+1,0);
-recv(cd,a_ack1,sizeof(a_ack1),0);
 int log_c;
 recv(cd,&log_c,sizeof(int),0);
 if(log_c==1){
@@ -379,7 +377,6 @@ scanf("%s",e_password);
 send(cd,e_username,strlen(e_username)+1,0);
 recv(cd,a_ack,sizeof(a_ack),0);
 send(cd,e_password,strlen(e_password)+1,0);
-recv(cd,a_ack1,sizeof(a_ack1),0);
 int log_e;
 recv(cd,&log_e,sizeof(int),0);
 if(log_e==1){
@@ -397,7 +394,9 @@ printf(           "\n===========================================================
                     "----------------------------                                           |\n"
                     "4. Approve loan                                                        |\n"
                     "----------------------------                                           |\n"
-                    "5. Logout                                                              |\n"
+                    "5. View loan application                                               |\n"
+                    "----------------------------                                           |\n"
+                    "6. Logout                                                              |\n"
                     "=====================================================================\n"
                     "Enter your choice: ",
                     e_username);
@@ -468,7 +467,7 @@ usleep(5);
 break;
 
 
-case 5:
+case 6:
 printf("Logged out\n");
 return;
 default:
@@ -487,7 +486,7 @@ void handle_manager(int cd){
 char rec[100];
 char a_ack[100];
 char a_ack1[100];
-printf("Initiated as Employee\n");
+printf("Initiated as Manager\n");
 bzero(a_ack1,sizeof(a_ack));
 bzero(a_ack,sizeof(a_ack));
 bzero(rec,sizeof(rec));
@@ -505,7 +504,6 @@ scanf("%s",m_password);
 send(cd,m_username,strlen(m_username)+1,0);
 recv(cd,a_ack,sizeof(a_ack),0);
 send(cd,m_password,strlen(m_password)+1,0);
-recv(cd,a_ack1,sizeof(a_ack1),0);
 int log_m;
 recv(cd,&log_m,sizeof(int),0);
 if(log_m==1){
@@ -519,7 +517,7 @@ while(1){
                     "----------------------------                                           |\n"
                     "2. Assign Loan                                                         |\n"
                     "----------------------------                                           |\n"
-                    "3. Promotion                                                           |\n"
+                    "3. Promotion/Demotion/Fire                                             |\n"
                     "----------------------------                                           |\n"
                     "4. Activate/Deactivate Employee                                        |\n"
                     "----------------------------                                           |\n"
@@ -531,6 +529,30 @@ int c_choice;
 scanf("%d",&c_choice);
 send(cd,&c_choice,sizeof(int),0);
 switch(c_choice){
+
+
+case 4:
+char ac_username[100];
+char ack[100];
+int a_d;
+char ack1[100];
+bzero(ac_username,sizeof(ac_username));
+bzero(ack,sizeof(ack));
+bzero(ack1,sizeof(ack1));
+printf("Enter the username: ");
+scanf("%s",ac_username);
+printf("Enter 0 to deactivate , Enter 1 to activate: ");
+scanf("%d",&a_d);
+send(cd,ac_username,strlen(ac_username),0);
+recv(cd,ack,sizeof(ack),0);
+send(cd,&a_d,sizeof(int),0);
+int act_check;
+recv(cd,&act_check,sizeof(int),0);
+if(act_check==1){ printf("Task Completed\n");}
+else printf("Failed to change details\n");
+break;
+
+
 case 5:
 printf("Logged out\n");
 return;
@@ -566,8 +588,13 @@ void server_handler(int cd){
             "=====================================================================|\n"
             "Please Make a Choice:[ ");
             int choice;
+            char mack[100];
+            bzero(mack,sizeof(mack));
             scanf("%d",&choice);
             send(cd,&choice,sizeof(choice),0);
+            recv(cd,mack,sizeof(mack),0);
+            bzero(mack,sizeof(mack));
+            usleep(5);
             switch(choice){
             case 1:
             handle_user(cd);

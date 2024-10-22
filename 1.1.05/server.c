@@ -647,7 +647,6 @@ void login_manager(struct USER *loginU,int cd){
     recv(cd,m_password,sizeof(m_username),0);
     strcpy(loginU->username, m_username);
     strcpy(a_ack1,"Acknowledgement");
-    send(cd,a_ack1,sizeof(a_ack1),0);
     loginU->password = hash(m_password);
     loginU->role = 1;
     int log_m=authenticate(loginU);
@@ -658,6 +657,26 @@ void login_manager(struct USER *loginU,int cd){
     int c_choice;
     recv(cd,&c_choice,sizeof(int),0);
     switch(c_choice){
+    
+    case 4:
+    char ac_username[100];
+    char ack[100];
+    int a_d;
+    char ack1[100];
+    bzero(ac_username,sizeof(ac_username));
+    bzero(ack,sizeof(ack));
+    bzero(ack1,sizeof(ack1));
+    recv(cd,ac_username,sizeof(ac_username),0);
+    strcpy(ack,"Acknowledgement");
+    send(cd,ack,sizeof(ack),0);
+    recv(cd,&a_d,sizeof(int),0);
+    printf("Doing job\n");
+    int act_check=changedetails(ac_username,ac_username,a_d,2,2);
+    send(cd,&act_check,sizeof(int),0);
+    printf("Job Done\n");
+    break;
+    
+    
     case 5:
     logout(loginU);
     return;
@@ -693,7 +712,6 @@ void login_employee(struct USER *loginU,int cd){
     recv(cd,e_password,sizeof(e_username),0);
     strcpy(loginU->username, e_username);
     strcpy(a_ack1,"Acknowledgement");
-    send(cd,a_ack1,sizeof(a_ack1),0);
     loginU->password = hash(e_password);
     loginU->role = 2;
     int log_e=authenticate(loginU);
@@ -754,7 +772,7 @@ void login_employee(struct USER *loginU,int cd){
    printf("Job done\n");
    break;
 
-    case 5:
+    case 6:
     logout(loginU);
     return;
     default:
@@ -790,7 +808,6 @@ void login_admin(struct USER *loginU,int cd){
     recv(cd,a_password,sizeof(a_username),0);
     strcpy(loginU->username, a_username);
     strcpy(a_ack1,"Acknowledgement");
-    send(cd,a_ack1,sizeof(a_ack1),0);
     loginU->password = hash(a_password);
     loginU->role = 0;
     int log_a=authenticate(loginU);
@@ -922,7 +939,6 @@ void login_user(struct USER *loginU,int cd){
     recv(cd,c_password,sizeof(c_username),0);
     strcpy(loginU->username, c_username);
     strcpy(a_ack1,"Acknowledgement");
-    send(cd,a_ack1,sizeof(a_ack1),0);
     loginU->password = hash(c_password);
     loginU->role = 3;
     int log_c=authenticate(loginU);
@@ -1042,8 +1058,13 @@ struct ACCOUNT userAccount;
 printf("Client has connected to the server!\n");
 while(1){
 int choice;
+char mack[100];
+bzero(mack,sizeof(mack));
 recv(cd,&choice,sizeof(choice),0);
-
+strcpy(mack,"Acknowledgement");
+send(cd,mack,sizeof(mack),0);
+bzero(mack,sizeof(mack));
+usleep(5);
 switch(choice){
     case 1:
     login_user(&loginUser,cd);
