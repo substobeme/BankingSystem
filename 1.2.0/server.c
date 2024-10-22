@@ -10,7 +10,8 @@
 #include <netinet/in.h>
 #include <string.h>
 #include "structure.h"
-#define PORT 8107
+#include<time.h>
+#define PORT 8108
 
 
 
@@ -629,9 +630,11 @@ int assignloan(char* c_username,char* e_username)
             lock.l_start = soff;       
             lock.l_len = sizeof(struct LOAN); 
             lock.l_pid = getpid(); 
+            srand(time(0));
             strcpy(LU.e_username,e_username);
             printf("%s\n",LU.e_username);
             LU.status=3;
+            LU.id=rand()%501;
             lseek(fd, soff, SEEK_SET);
             if (write(fd, &LU, sizeof(struct LOAN)) < 0){
                     perror("System Crashed\n");
@@ -644,6 +647,57 @@ int assignloan(char* c_username,char* e_username)
                 fcntl(fd, F_SETLK, &lock);
                 close(fd);
                 return 1;
+            
+           
+        }
+    }
+    close(fd);
+    return 0;
+}
+
+
+int decideloan(char* c_username,int id,int decision)
+{   struct USER UL;
+    struct LOAN LU;
+    struct flock lock;
+    float amnt;
+    int soff;
+    int fd = open("loan.db", O_RDWR);
+    if (fd < 0)
+    {
+        perror("System Crashed/n");
+        return 0;
+    }
+    while ((soff = lseek(fd, 0, SEEK_CUR)) != -1 && read(fd, &LU, sizeof(struct LOAN)) > 0)
+    {
+        if (LU.id==id && LU.status==3)
+        {   printf("Step1 of loan decision\n");
+            lock.l_type = F_WRLCK;      
+            lock.l_whence = SEEK_SET;   
+            lock.l_start = soff;       
+            lock.l_len = sizeof(struct LOAN); 
+            lock.l_pid = getpid(); 
+            srand(time(0));
+            printf("%s\n",LU.e_username);
+            LU.status=decision;
+            LU.id=rand()%501;
+            amnt= LU.loan;
+            lseek(fd, soff, SEEK_SET);
+            if (write(fd, &LU, sizeof(struct LOAN)) < 0){
+                    perror("System Crashed\n");
+                    lock.l_type = F_UNLCK; 
+                    fcntl(fd, F_SETLK, &lock);
+                    close(fd);
+                    return 0;
+            }
+            lock.l_type = F_UNLCK; 
+            fcntl(fd, F_SETLK, &lock);
+            close(fd);
+            if(decision==0){
+            strcpy(UL.username,c_username);
+            money(&UL,amnt,1);
+            }
+            return 1;
             
            
         }
@@ -679,8 +733,8 @@ char *view_loans_employee(char* username) {
             }
 
             char buf[600];
-            sprintf(buf, "The loan amount requested: %-10.2f at %s by %s,is of status %s\n",
-                    readAccount.loan, ctime(&readAccount.time), readAccount.c_username,stat1);
+            sprintf(buf, "The loan amount requested: %-10.2f at %s by %s of ID %d,is of status %s\n",
+                    readAccount.loan, ctime(&readAccount.time), readAccount.c_username,readAccount.id,stat1);
             
             strcat(loan_buffer, buf);
         }
@@ -1003,6 +1057,28 @@ void login_employee(struct USER *loginU,int cd){
    send(cd,s_passbk,strlen(s_passbk)+1,0);
    printf("Job done\n");
    break;
+
+   case 4:
+   char d_username[100];
+   char dack[100];
+   int id;
+   int decision;
+   char dack1[100];
+   bzero(d_username,sizeof(d_username));
+   bzero(dack,sizeof(dack));
+   bzero(dack1,sizeof(dack1));
+   recv(cd,d_username,sizeof(d_username),0);
+   strcpy(dack,"Acknowledgement");
+   send(cd,dack,sizeof(dack),0);
+   recv(cd,&id,sizeof(int),0);
+   strcpy(dack1,"Acknowledgement");
+   send(cd,dack1,sizeof(dack1),0);
+   recv(cd,&decision,sizeof(int),0);
+    printf("Doing job\n");
+    int dact_check=decideloan(d_username,id,decision);
+    send(cd,&dact_check,sizeof(int),0);
+    printf("Job Done\n");
+    break;
 
    case 5:
     char* ELReader= view_loans_employee(loginU->username);

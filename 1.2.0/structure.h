@@ -14,6 +14,7 @@ float balance;};
 
 
 struct LOAN{
+int id;
 char c_username[100];
 char e_username[100];
 time_t time;

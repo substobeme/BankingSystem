@@ -6,7 +6,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "structure.h"
-#define PORT 8107
+#include <time.h>
+#define PORT 8108
 
 void handle_admin(int cd){
 char rec[100];
@@ -465,6 +466,35 @@ usleep(10);
 printf("%s\n",s1_passbk);
 usleep(5);
 break;
+
+
+case 4:
+char d_username[100];
+char dack[100];
+int id;
+int decision;
+char dack1[100];
+bzero(d_username,sizeof(d_username));
+bzero(dack,sizeof(dack));
+bzero(dack1,sizeof(dack1));
+printf("Enter the customer username: ");
+scanf("%s",d_username);
+printf("Enter the id");
+scanf("%d",&id);
+printf("Enter the decision: 0(accept)/1(reject)");
+scanf("%d",&decision);
+if (decision<0||decision>1)decision=1;
+send(cd,d_username,strlen(d_username),0);
+recv(cd,dack,sizeof(dack),0);
+send(cd,&id,sizeof(int),0);
+recv(cd,dack1,sizeof(dack1),0);
+send(cd,&decision,sizeof(int),0);
+int dact_check;
+recv(cd,&dact_check,sizeof(int),0);
+if(dact_check==1){ printf("Task Completed\n");}
+else printf("Failed to change details\n");
+break;
+
 
 case 5:
 char ELReader[50000];
