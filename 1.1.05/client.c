@@ -86,8 +86,65 @@ send(cd,&r_role,sizeof(int),0);
 recv(cd,u_ack2,sizeof(u_ack2),0);
 break;
 
+case 2:
+char aac_username[100];
+char aack[100];
+int aa_d;
+int aa_role;
+char aack1[100];
+bzero(aac_username,sizeof(aac_username));
+bzero(aack,sizeof(aack));
+bzero(aack1,sizeof(aack1));
+printf("Enter the username: ");
+scanf("%s",aac_username);
+printf("Enter 0 to deactivate , Enter 1 to activate: ");
+scanf("%d",&aa_d);
+printf("Enter the role of user:");
+scanf("%d",&aa_role);
+send(cd,aac_username,strlen(aac_username),0);
+recv(cd,aack,sizeof(aack),0);
+send(cd,&aa_d,sizeof(int),0);
+recv(cd,aack1,sizeof(aack1),0);
+send(cd,&aa_role,sizeof(int),0);
+int aact_check;
+recv(cd,&aact_check,sizeof(int),0);
+if(aact_check==1){ printf("Task Completed\n");}
+else printf("Failed to change details\n");
+break;
 
-
+case 3:
+char ac_username[100];
+char ack[100];
+char nac_username[100];
+int a_role;
+int na_role;
+char ack1[100];
+char ack2[100];
+bzero(ac_username,sizeof(ac_username));
+bzero(nac_username,sizeof(nac_username));
+bzero(ack,sizeof(ack));
+bzero(ack1,sizeof(ack1));
+bzero(ack2,sizeof(ack2));
+printf("Enter the username: ");
+scanf("%s",ac_username);
+printf("Enter the new username: ");
+scanf("%s",nac_username);
+printf("Enter the role of user: ");
+scanf("%d",&a_role);
+printf("Enter the new role of user:");
+scanf("%d",&na_role);
+send(cd,ac_username,strlen(ac_username),0);
+recv(cd,ack,sizeof(ack),0);
+send(cd,nac_username,strlen(nac_username),0);
+recv(cd,ack1,sizeof(ack1),0);
+send(cd,&a_role,sizeof(int),0);
+recv(cd,ack2,sizeof(ack2),0);
+send(cd,&na_role,sizeof(int),0);
+int act_check;
+recv(cd,&act_check,sizeof(int),0);
+if(act_check==1){ printf("Task Completed\n");}
+else printf("Failed to change details\n");
+break;
 
 
 case 4:

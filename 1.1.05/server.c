@@ -287,8 +287,10 @@ int changedetails(char* username,char* new_username,int activate, int role,int n
             lock.l_len = sizeof(struct USER); 
             lock.l_pid = getpid(); 
             strcpy(U.username,new_username);
+            printf("%s\n",U.username);
             U.status=activate;
             U.role=new_role;
+            printf("%d\n",U.role);
             lseek(fd, soff, SEEK_SET);
             if (write(fd, &U, sizeof(struct USER)) < 0){
                     perror("System Crashed\n");
@@ -828,6 +830,61 @@ void login_admin(struct USER *loginU,int cd){
     add_User(u_username,u_password,r_role);
     printf("Job done\n");
     break;
+    
+    case 2:
+    char aac_username[100];
+    char aack[100];
+    int aa_d;
+    int aa_role;
+    char aack1[100];
+    bzero(aac_username,sizeof(aac_username));
+    bzero(aack,sizeof(aack));
+    bzero(aack1,sizeof(aack1));
+    recv(cd,aac_username,sizeof(aac_username),0);
+    strcpy(aack,"Acknowledgement");
+    send(cd,aack,sizeof(aack),0);
+    recv(cd,&aa_d,sizeof(int),0);
+    strcpy(aack1,"Acknowledgement");
+    send(cd,aack1,sizeof(aack1),0);
+    recv(cd,&aa_role,sizeof(int),0);
+    printf("Doing job\n");
+    int aact_check=changedetails(aac_username,aac_username,aa_d,aa_role,aa_role);
+    send(cd,&aact_check,sizeof(int),0);
+    printf("Job Done\n");
+    break;
+
+   case 3:
+    char ac_username[100];
+    char ack[100];
+    char nac_username[100];
+    int a_role;
+    int na_role;
+    char ack1[100];
+    char ack2[100];
+    bzero(ac_username,sizeof(ac_username));
+    bzero(nac_username,sizeof(nac_username));
+    bzero(ack,sizeof(ack));
+    bzero(ack1,sizeof(ack1));
+    bzero(ack2,sizeof(ack2));
+    recv(cd,ac_username,sizeof(ac_username),0);
+    strcpy(ack,"Acknowledgement");
+    send(cd,ack,sizeof(ack),0);
+    recv(cd,nac_username,sizeof(nac_username),0);
+    strcpy(ack1,"Acknowledgement");
+    send(cd,ack1,sizeof(ack1),0);
+    recv(cd,&a_role,sizeof(int),0);
+    strcpy(ack2,"Acknowledgement");
+    send(cd,ack2,sizeof(ack2),0);
+    recv(cd,&na_role,sizeof(int),0);
+    printf("Doing job\n");
+    int act_check=changedetails(ac_username,nac_username,1,a_role,na_role);
+    send(cd,&act_check,sizeof(int),0);
+    printf("Job Done\n");
+    break;
+   
+
+
+
 
     case 4:
     logout(loginU);
