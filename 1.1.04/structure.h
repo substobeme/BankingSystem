@@ -27,7 +27,7 @@ char feedback[1700];
 time_t tme;};
 
 struct TRANSACTION{
-char username[50];
+char username[100];
 time_t tme;
 int flag; // 0: Minus  1 : Plus
 float amount;
