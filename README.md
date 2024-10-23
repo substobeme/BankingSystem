@@ -1,6 +1,8 @@
 # Banking System Project
 _________________________
+Note: Use "stress" folder of the project as thats the version representing the project without any errors.
 
+The project involves implementing a Banking Management System using socket Programming. Below is a video demo of the said project.
 
 ## Video Demo
 
