@@ -339,7 +339,7 @@ int changedetails(char* username,char* new_username,int activate, int role,int n
     }
     while ((soff = lseek(fd, 0, SEEK_CUR)) != -1 && read(fd, &U, sizeof(struct USER)) > 0)
     {
-        if (strcmp(username, U.username) == 0 && role == U.role)
+        if (strcmp(username, U.username) == 0 && role == U.role&& U.session==0)
         {   printf("Step1 of details initialized\n");
             lock.l_type = F_WRLCK;      
             lock.l_whence = SEEK_SET;   
