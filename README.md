@@ -21,3 +21,5 @@ stress3: Handled more edge cases, no new functionality implementation
 stress: Handled more edge cases, no new functionality implementation
 
 1.2.0: Complete funtionality, fails corner cases and some stress case issues
+
+previous versions are backup codes made at various levels of integtration.
